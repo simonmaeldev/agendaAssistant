@@ -1,0 +1,60 @@
+append([], L, L).
+append([H|T], L2, [H|L3]) :- append(T, L2, L3).
+
+addTime(hour(H, M), A, hour(RH, RM)) :-
+        Madd is M + A,
+        RM is mod(Madd, 60),
+        AH is Madd // 60,
+        Hadd is H + AH,
+        RH is mod(Hadd, 24).
+
+nextTime(Start, NewStart) :-
+    timeUnit(T),
+    NewStart is Start + T.
+
+:- dynamic borne/2.
+
+generateHoursAcc(_, Start, Stop, _, Acc, Acc) :- Start >= Stop, !.
+
+generateHoursAcc(Day, Start, Stop, [period(Limit, NewStart)|Avoid], Res, Acc) :-
+    Limit =< Start,
+    Start =< NewStart,
+    generateHoursAcc(Day, NewStart, Stop, Avoid, Res, [borne(Day, Limit) | Acc]).
+
+generateHoursAcc(Day, Start, Stop, Avoid, Res, Acc) :-
+    (Avoid = [] ; Avoid = [period(S, _)|_], S \= Start),
+    nextTime(Start, NewStart),
+    generateHoursAcc(Day, NewStart, Stop, Avoid, Res, [borne(Day, Start) | Acc]).
+
+% Avoid doit etre une liste de plages horaires impossibles, triées dans l'ordre croissant
+% period(start, end)
+% l'heure de début et de fin seront comprises dans les heures générées
+% step en minutes
+% start, stop et periodes sous le format hour(Hour, Minutes)
+generateHours(Day, Start, Stop, Avoid) :- 
+    generateHoursAcc(Day, Start, Stop, Avoid, Res, []),
+    print(Res),
+    maplist(assert, Res).
+
+% todo : mettre en place le jour dedans, et utiliser les bornes qui sont désormais assert
+affecterAllAcc([], Ltaches, Ltaches).
+affecterAllAcc([Name|Tail], Ltaches, AccTaches) :-
+    affecter(Name, S, E),
+    dontConflicts(S, E, AccTaches),
+    append(AccTaches, [tache(Name, S, E)], NewAccTaches),
+    affecterAllAcc(Tail, Ltaches, NewAccTaches).
+
+affecterAll(Lnom, Ltaches) :-
+    affecterAllAcc(Lnom, Ltaches, []).
+
+dontConflicts(_, _, []).
+dontConflicts(S, E, [tache(_, Sl, El)|Ltaches]) :-
+    (E =< Sl; El =< S), dontConflicts(S, E, Ltaches).
+
+% user defined
+timeUnit(1).
+time(coder, 2).
+time(vaisselle, 1).
+
+% executed dynamically
+generateHours(1, 17, 24, [period(20, 22)]).
