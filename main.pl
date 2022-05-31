@@ -89,3 +89,4 @@ tpsNecessaire(vaisselle, 60).
 
 % executed dynamically
 %generateHours(time(1, 17, 0), time(1, 23, 0), [avoid(time(1, 20, 0), time(1, 22, 0))]).
+%affecterAll([coder, vaisselle], X).
