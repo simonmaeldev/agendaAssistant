@@ -6,18 +6,24 @@ RUN apt-get -y update
 RUN apt-get -y install swi-prolog
 RUN apt-get -y install openjdk-11-jdk
 RUN apt-get -y install swi-prolog-java
+RUN curl -L https://services.gradle.org/distributions/gradle-7.4.2-bin.zip -o gradle-7.4.2-bin.zip
+RUN apt-get install -y unzip
+RUN unzip gradle-7.4.2-bin.zip
+
 
 ##
 # Configure our application.
 #
 WORKDIR /app
-ADD Core.java /app/Core.java
+ADD src/Core.java /app/Core.java
 ADD main.pl /app/main.pl
 
 ENV SWI_HOME_DIR=/usr/lib/swi-prolog/
 ENV LD_LIBRARY_PATH=/usr/lib/swi-prolog/lib/x86_64-linux/
 ENV CLASSPATH=.:/usr/lib/swi-prolog/lib/jpl.jar
 ENV LD_PRELOAD=/usr/lib/libswipl.so
+ENV GRADLE_HOME=/app/gradle-7.4.2
+ENV PATH=$PATH:$GRADLE_HOME/bin
 
 ##
 # Execute

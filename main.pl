@@ -46,14 +46,12 @@ generateHoursAcc(Start, Stop, Avoid, Res, Acc) :-
     nextTime(Start, NewStart),
     generateHoursAcc(NewStart, Stop, Avoid, Res, [borne(Start) | Acc]).
 
-% Avoid doit etre une liste de plages horaires impossibles, triées dans l'ordre croissant
+% Avoid doit etre une liste de plages horaires impossibles, triees dans l'ordre croissant
 % avoid(start, end)
-% l'heure de début et de fin seront comprises dans les heures générées
+% l'heure de debut et de fin seront comprises dans les heures generees
 % start, stop et avoides sous le format time(Day, Hour, Minutes)
-generateHours(Start, Stop, Avoid) :- 
-    maplist(assert, Avoid),
-    generateHoursAcc(Start, Stop, Avoid, Res, []),
-    maplist(asserta, Res).
+
+generateHours(Start, Stop, Avoid) :- maplist(assert, Avoid), generateHoursAcc(Start, Stop, Avoid, Res, []), maplist(asserta, Res).
 
 affecterAllAcc([], Ltaches, Ltaches).
 affecterAllAcc([Name|Tail], Ltaches, AccTaches) :-
@@ -83,9 +81,9 @@ overrideAvoid(S, E) :-
     ).
 
 % user defined
-timeUnit(5).
-tpsNecessaire(coder, 120).
-tpsNecessaire(vaisselle, 60).
+%timeUnit(5).
+%tpsNecessaire(coder, 120).
+%tpsNecessaire(vaisselle, 60).
 
 % executed dynamically
 %generateHours(time(1, 17, 0), time(1, 23, 0), [avoid(time(1, 20, 0), time(1, 22, 0))]).
