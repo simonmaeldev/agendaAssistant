@@ -12,5 +12,6 @@ public class RestResourceMainConfig extends ResourceConfig {
         System.out.println("Registering Rest Configuration...");
 
         register(HelloWebRestService.class);
+        register(CORSResponseFilter.class);
     }
 }
